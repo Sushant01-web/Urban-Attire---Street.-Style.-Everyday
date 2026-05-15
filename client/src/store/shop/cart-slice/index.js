@@ -22,7 +22,7 @@ Need to Create 4 Async Thunk Such as for (Addproduct, Fetchproduct, UpdateProduc
 export const addToCart = createAsyncThunk('cart/addToCart', async ({ userId, productId, quantity }) => {
 
 
-    const response = await axios.post("http://localhost:5000/api/shop/cart/add", {
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/shop/cart/add`, {
         userId, productId, quantity
     })
     return response.data
@@ -33,7 +33,7 @@ export const addToCart = createAsyncThunk('cart/addToCart', async ({ userId, pro
 export const fetchCartItems = createAsyncThunk('cart/fetchCartItems', async (userId) => {
 
 
-    const response = await axios.get(`http://localhost:5000/api/shop/cart/get/${userId}`)
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/shop/cart/get/${userId}`)
     return response.data
 })
 
@@ -45,7 +45,7 @@ export const deleteCartItem = createAsyncThunk(
   async ({ userId, productId }, thunkAPI) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/shop/cart/${userId}/${productId}`
+        `${import.meta.env.VITE_API_URL}/api/shop/cart/${userId}/${productId}`
       )
       return response.data
     } catch (error) {
@@ -60,7 +60,7 @@ export const deleteCartItem = createAsyncThunk(
 export const updateCartQuantity = createAsyncThunk('cart/updateCartQuantity', async ({ userId, productId, quantity }) => {
 
 
-    const response = await axios.put('http://localhost:5000/api/shop/cart/update-cart',
+    const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/shop/cart/update-cart`,
         {
             userId, productId, quantity
         }

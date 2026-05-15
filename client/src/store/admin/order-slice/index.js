@@ -13,7 +13,7 @@ const initialState = {
 
 //CReating Asyncthunk for user's all Order .. used to simplify writing asynchronous logic (like API calls) in Redux.✔ avoid writing action types and creators manually
 export const getAllOrdersForAdmin = createAsyncThunk('/order/getAllOrdersForAdmin', async () => {
-    const response = await axios.get(`http://localhost:5000/api/admin/orders/get`)
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/orders/get`)
 
     return response.data
 })
@@ -21,7 +21,7 @@ export const getAllOrdersForAdmin = createAsyncThunk('/order/getAllOrdersForAdmi
 
 //CReating Asyncthunk for user's Order's details .. used to simplify writing asynchronous logic (like API calls) in Redux.✔ avoid writing action types and creators manually
 export const getOrderDetailsForAdmin = createAsyncThunk('/order/getOrderDetailsForAdmin', async (id) => {
-    const response = await axios.get(`http://localhost:5000/api/admin/orders/details/${id}`)
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/orders/details/${id}`)
 
     return response.data
 })
@@ -29,7 +29,7 @@ export const getOrderDetailsForAdmin = createAsyncThunk('/order/getOrderDetailsF
 
 //CReating Asyncthunk for user's Order's update .. used to simplify writing asynchronous logic (like API calls) in Redux.✔ avoid writing action types and creators manually
 export const updateOrderStatus = createAsyncThunk('/order/updateOrderStatus', async({id, orderStatus})=>{
-    const response = await axios.put(`http://localhost:5000/api/admin/orders/update/${id}`,{orderStatus})
+    const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/admin/orders/update/${id}`,{orderStatus})
 
     return response.data
 })

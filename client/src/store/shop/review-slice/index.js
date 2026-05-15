@@ -16,7 +16,7 @@ Creating asyncthunk to add reviews of product -- used to simplify writing asynch
 export const addReview = createAsyncThunk('/review/addReview', async (formdata) => {
 
     //this will be get method because we are fetching products 
-    const result = await axios.post(`http://localhost:5000/api/shop/review/add`, formdata)
+    const result = await axios.post(`${import.meta.env.VITE_API_URL}/api/shop/review/add`, formdata)
     return result?.data
 })
 
@@ -27,7 +27,7 @@ Creating asyncthunk to get reviews of product -- used to simplify writing asynch
 export const getReview = createAsyncThunk('/review/getReview', async (id) => {
 
     //this will be get method because we are fetching products 
-    const result = await axios.get(`http://localhost:5000/api/shop/review/${id}`)
+    const result = await axios.get(`${import.meta.env.VITE_API_URL}/api/shop/review/${id}`)
     return result?.data
 })
 

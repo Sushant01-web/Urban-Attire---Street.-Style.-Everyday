@@ -16,7 +16,7 @@ Creating asyncthunk to search product -- used to simplify writing asynchronous l
 export const getSearchResult = createAsyncThunk('/search/getSearchResult', async (keyword) => {
 
     //this will be get method because we are fetching products 
-    const result = await axios.get(`http://localhost:5000/api/shop/search/${keyword}`)
+    const result = await axios.get(`${import.meta.env.VITE_API_URL}/api/shop/search/${keyword}`)
     return result?.data
 })
 

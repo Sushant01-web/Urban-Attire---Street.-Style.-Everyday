@@ -21,7 +21,7 @@ export const fetchAllFilteredProducts = createAsyncThunk('/products/fetchAllProd
     })
 
     //this will be get method because we are fetching products 
-    const result = await axios.get(`http://localhost:5000/api/shop/products/get?${query}`)
+    const result = await axios.get(`${import.meta.env.VITE_API_URL}/api/shop/products/get?${query}`)
     return result?.data
 })
 
@@ -33,7 +33,7 @@ Creating asyncthunk to fetching product details -- used to simplify writing asyn
 export const fetchProductDetails = createAsyncThunk('/products/fetchProductDetails', async (id) => {
 
     //this will be get method because we are fetching products 
-    const result = await axios.get(`http://localhost:5000/api/shop/products/get/${id}`)
+    const result = await axios.get(`${import.meta.env.VITE_API_URL}/api/shop/products/get/${id}`)
     return result?.data
 })
 
