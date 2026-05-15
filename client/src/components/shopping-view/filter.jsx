@@ -1,0 +1,54 @@
+//Creating Section for Filtering th products based on category and brand
+
+import { filterOptions } from "@/config";
+import { Fragment } from "react";
+import { Label } from "../ui/label";
+import { Checkbox } from "../ui/checkbox";
+import { Separator } from "../ui/separator";
+
+//Receing the props
+function ProductFilter({ filters, handleFilter }) {
+  return (
+    <div className="bg-background rounded-lg shadow-sm">
+      <div className="p-4 border-b">
+        <h2 className="text-lg font-semibold">Filters</h2>
+      </div>
+
+      <div className="p-4 space-y-4">
+        {
+          //Getting Fields from config/index.js
+          Object.keys(filterOptions).map((keyItem) => (
+            <Fragment key={keyItem}>
+              <div>
+                <h3 className="text-base font-bold">{keyItem}</h3>
+                <div className="grid gap-2 mt-2">
+                  {filterOptions[keyItem]?.map((option) => (
+                    <Label
+                      key={option.id}
+                      className="flex items-center gap-2 font-medium"
+                    >
+                      {/* According to click .. We are applying filter and maintaining the selected checkbox even after refreshing the page */}
+                      <Checkbox
+                        checked={
+                          filters &&
+                          Object.keys(filters).length > 0 &&
+                          filters[keyItem] &&
+                          filters[keyItem].indexOf(option.id) > -1
+                        }
+                        onCheckedChange={() => handleFilter(keyItem, option.id)}
+                      />
+                      {option.label}
+                    </Label>
+                  ))}
+                </div>
+              </div>
+              <Separator />
+            </Fragment>
+          ))
+        }
+      </div>
+    </div>
+  );
+}
+
+export default ProductFilter;
