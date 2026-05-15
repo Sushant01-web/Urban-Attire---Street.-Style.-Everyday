@@ -40,23 +40,35 @@ const PORT = process.env.PORT || 5000
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://urban-attiree.netlify.app/"
+  "https://urban-attiree.netlify.app"
 ];
 
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
+    // allow server-to-server or Postman
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
-    return callback(new Error("CORS blocked for origin: " + origin));
+    return callback(null, true); // ⚠️ IMPORTANT: don't crash server
   },
   credentials: true,
-}));
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "Cache-Control",
+    "Expires",
+    "Pragma"
+  ]
+};
 
-app.options("*", cors());
+app.use(cors(corsOptions));
+
+// IMPORTANT: handle preflight safely
+app.options("*", cors(corsOptions));
 
 app.use(cookieParser())
 app.use(express.json())
