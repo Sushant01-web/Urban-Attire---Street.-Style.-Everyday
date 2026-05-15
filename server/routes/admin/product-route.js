@@ -10,20 +10,24 @@ const { upload } = require("../../helpers/cloudinary")
 const router = express.Router()
 
 //Creating route to upload images
-router.post("/upload-image", upload.single("my_file"), handleImageUpload, (req, res) => {
-    if (!req.file) {
-        return res.json({
-            success: false,
-            message: "No file uploaded"
-        });
-    }
+// router.post("/upload-image", upload.single("my_file"), handleImageUpload, (req, res) => {
+//     if (!req.file) {
+//         return res.json({
+//             success: false,
+//             message: "No file uploaded"
+//         });
+//     }
 
-    return res.json({
-        success: true,
-        message: "Image uploaded successfully"
-    });
-});
-
+//     return res.json({
+//         success: true,
+//         message: "Image uploaded successfully"
+//     });
+// });
+router.post(
+  "/upload-image",
+  upload.single("my_file"),
+  handleImageUpload
+);
 
 //Creating route for Add Products
 router.post('/add', addProduct)

@@ -4,6 +4,8 @@ const cookieParser = require("cookie-parser")
 const cors = require("cors")
 const authRouter = require("./routes/auth/auth-routes")
 
+require('dotenv').config()
+
 //Getting route for admin products
 const AdminProductRouter = require("./routes/admin/product-route")
 
@@ -31,13 +33,13 @@ const searchProductRouter = require("./routes/shop/search-route")
 //Getting routes for managing reviews of Products
 const reviewProductsRouter = require("./routes/shop/review-routes")
 
-mongoose.connect("mongodb+srv://sushantgaikwad2002:Sushant0117@cluster0.fru4nub.mongodb.net/").then(() => { console.log("Database Connected") }).catch((error) => { console.log(error) })
+mongoose.connect(process.env.MONGODB_URL).then(() => { console.log("Database Connected") }).catch((error) => { console.log(error) })
 
 const app = express()
 const PORT = process.env.PORT || 5000
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_BASE_URL,
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
     allowedHeaders: [
         'Content-Type',

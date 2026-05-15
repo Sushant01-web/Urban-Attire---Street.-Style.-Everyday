@@ -15,11 +15,9 @@ import {
   editProduct,
   fetchAllProducts,
 } from "@/store/admin/product-slice";
-import { Key } from "lucide-react";
 import { Fragment, useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { data } from "react-router-dom";
 import { toast } from "sonner";
 
 const initialFormData = {
@@ -49,8 +47,9 @@ function AdminProducts() {
   //Creating State to get current edited Item's id
   const [currentEditedId, setCurrentEditedId] = useState(null);
 
-  const { productList } = useSelector((state) => state.AdminProducts);
-  const dispatch = useDispatch();
+  const productList = useSelector(
+    (state) => state.adminProduct?.productList || []
+  ); const dispatch = useDispatch();
 
 
   //creating onsubmit function to save this form or when you want list of products then use usedispatch
@@ -60,64 +59,64 @@ function AdminProducts() {
     //When user refreshes the page he will get latest products
     currentEditedId !== null
       ? dispatch(
-          editProduct({
-            id: currentEditedId,
-            formData : formData,
-          })
-        ).then((data) => {
-          console.log(data, "edit");
-
-          //If Promise get fulfilled then fetch the changes in products
-          if(data?.payload?.success){
-            dispatch(fetchAllProducts())
-            //Reseting form
-            setFormData(initialFormData)
-            
-            //Closing the form
-            setOpenCreateProducts(false)
-
-            //Setting form id as null
-            setCurrentEditedId(null)
-          }
+        editProduct({
+          id: currentEditedId,
+          formData: formData,
         })
+      ).then((data) => {
+        console.log(data, "edit");
+
+        //If Promise get fulfilled then fetch the changes in products
+        if (data?.payload?.success) {
+          dispatch(fetchAllProducts())
+          //Reseting form
+          setFormData(initialFormData)
+
+          //Closing the form
+          setOpenCreateProducts(false)
+
+          //Setting form id as null
+          setCurrentEditedId(null)
+        }
+      })
       : /*
     Calling Asyncthunk method which is created in config/admin/index.js
     When the form is submitted - It sends formdata and uploadedImageUrl to Redux and add New Product
     */
-        dispatch(
-          addNewProduct({
-            ...formData,
-            image: uploadedImageUrl,
-          })
-        ).then((data) => {
-          if (data?.payload?.success) {
-            // Reset form
-            setFormData(initialFormData);
+      dispatch(
+        addNewProduct({
+          ...formData,
+          image: uploadedImageUrl,
+        })
+      ).then((data) => {
+        if (data?.payload?.success) {
+          // Reset form
+          setFormData(initialFormData);
 
-            // Reset image state
-            setImageFile(null);
-            setUploadedImageUrl("");
+          // Reset image state
+          setImageFile(null);
+          setUploadedImageUrl("");
 
-            // Close sheet
-            setOpenCreateProducts(false);
+          // Close sheet
+          setOpenCreateProducts(false);
 
-            // Show toast
-            toast("Product Added Successfully");
+          // Show toast
+          toast("Product Added Successfully");
 
-            // Reload products
-            dispatch(fetchAllProducts());
-          }
-        });
+          // Reload products
+          dispatch(fetchAllProducts());
+        }
+      });
   }
 
 
   //Creating function to delete product
-  function handleDelete(getCurrentProdutId){
+  function handleDelete(getCurrentProdutId) {
     console.log(getCurrentProdutId)
 
     //Getting function from asyncthunk i.e delte product
-    dispatch(deleteProduct(getCurrentProdutId)).then(data=>{
-      if(data?.payload?.success){
+    dispatch(deleteProduct(getCurrentProdutId)).then(data => {
+      if (data?.payload?.success) {
         dispatch(fetchAllProducts())
       }
     })
@@ -125,7 +124,7 @@ function AdminProducts() {
 
 
   //Disabling Add Button before it gets all field filled
-  function isFormValid(){
+  function isFormValid() {
     return Object.keys(formData).map(key => formData[key] !== "").every(item => item)
   }
 
@@ -148,16 +147,17 @@ function AdminProducts() {
           //Rendering products list here which
           productList && productList.length > 0
             ? //Mapping product list
-              productList.map((productItem) => (
-                //When we want to edit already added product.. then form should reopen again with current details of product
-                <AdminProductTile
-                  product={productItem}
-                  setCurrentEditedId={setCurrentEditedId}
-                  setOpenCreateProducts={setOpenCreateProducts}
-                  setFormData={setFormData}
-                  handleDelete={handleDelete}
-                />
-              ))
+            productList.map((productItem) => (
+              //When we want to edit already added product.. then form should reopen again with current details of product
+              <AdminProductTile
+                key={productItem._id}
+                product={productItem}
+                setCurrentEditedId={setCurrentEditedId}
+                setOpenCreateProducts={setOpenCreateProducts}
+                setFormData={setFormData}
+                handleDelete={handleDelete}
+              />
+            ))
             : null
         }
       </div>
@@ -206,8 +206,8 @@ function AdminProducts() {
               }
               onSubmit={onSubmit}
 
-              //Disabling Add Button until all field gets filled
-              // isBtnDisabled={!isFormValid()}
+            //Disabling Add Button until all field gets filled
+            // isBtnDisabled={!isFormValid()}
             />
           </div>
         </SheetContent>
