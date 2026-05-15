@@ -39,22 +39,31 @@ const app = express()
 const PORT = process.env.PORT || 5000
 
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://your-site-name.netlify.app",
+    "http://localhost:5173",
+    "https://urban-attiree.netlify.app/"
 ];
 
-app.use(
-  cors({
+app.use(cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
+        // allow Postman / server-to-server requests too
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        } else {
+            return callback(new Error("Blocked by CORS: " + origin));
+        }
     },
     credentials: true,
-  })
-);
+    methods: ['GET', 'POST', 'DELETE', 'PUT'],
+    allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'Cache-Control',
+        'Expires',
+        'Pragma'
+    ]
+}));
 
 app.use(cookieParser())
 app.use(express.json())
