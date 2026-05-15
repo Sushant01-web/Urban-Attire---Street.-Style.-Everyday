@@ -68,7 +68,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // IMPORTANT: handle preflight safely
-app.options("*", cors(corsOptions));
+app.options("(.*)", cors(corsOptions));
 
 app.use(cookieParser())
 app.use(express.json())
