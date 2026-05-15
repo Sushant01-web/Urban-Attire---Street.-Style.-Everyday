@@ -82,6 +82,8 @@ export const checkAuth = createAsyncThunk(
     }
 );
 
+console.log(import.meta.env.VITE_API_URL);
+
 const authSlice = createSlice({
     name: "auth",
     initialState,
