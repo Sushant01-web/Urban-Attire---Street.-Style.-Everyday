@@ -19,8 +19,8 @@ import CheckAuth from "./components/common/check-auth";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuth } from "./store/auth-slice";
 import { Skeleton } from "./components/ui/skeleton";
-import PaypalReturn from "./components/shopping-view/paypal-return";
-import PaymentSuccessPage from "./components/shopping-view/payment-success";
+import PaypalReturn from "./pages/shopping-view/paypal-return";
+import PaymentSuccessPage from "./pages/shopping-view/payment-success";
 import SearchProducts from "./pages/shopping-view/search";
 
 function App() {

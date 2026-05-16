@@ -3,7 +3,7 @@ Here we will create a design and code for-- after payment done
 -------------------------------*/
 
 import { useDispatch } from "react-redux"
-import { Card, CardHeader, CardTitle } from "../ui/card"
+import { Card, CardHeader, CardTitle } from "../../components/ui/card"
 import { useLocation } from "react-router-dom"
 import { useEffect } from "react"
 import { capturePayemnt } from "@/store/shop/order-slice"

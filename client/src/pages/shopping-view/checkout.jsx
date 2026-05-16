@@ -1,149 +1,237 @@
 /*------------------------------------------
     Building logic and Design for Checkout Page
 -------------------------------------------*/
-import Address from "@/components/shopping-view/address";
-import checkoutImg from "../../assets/checkout.jpg"
+
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
+import Address from "@/components/shopping-view/address";
 import UserCartItemsLayout from "@/components/shopping-view/cartItems-content";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { createNewOrder } from "@/store/shop/order-slice";
-import { toast } from "sonner";
-import { Badge } from "lucide-react";
+import checkoutImg from "../../assets/checkout.jpg";
 
 function ShoppingCheckout() {
+  /*------------------------------------------
+    Redux Store
+  -------------------------------------------*/
+  const dispatch = useDispatch();
 
-  //Getting Cart Items -- Which is added by user
-  const {cartItems} = useSelector(state => state.shopCart)
-  const dispatch = useDispatch()
+  const { cartItems } = useSelector(
+    (state) => state.shopCart);
 
+  const { user } = useSelector(
+    (state) => state.auth);
 
-  /*------------------------------
-  Calculating Total Amount of Cart
-  -------------------------------*/
-  const totalCartAmount = cartItems && cartItems.items && cartItems.items.length > 0 ?
-    cartItems.items.reduce((total, allCartItem) => total + (allCartItem?.salePrice > 0 ? allCartItem?.salePrice : allCartItem?.price) * allCartItem?.quantity, 0) : 0;
+  const { approvalURL } = useSelector(
+    (state) => state.shopOrder);
 
+  /*------------------------------------------
+    State Management
+  -------------------------------------------*/
+  const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null);
+  const [isPaymentStart, setIsPaymentStart] = useState(false);
 
-  /*------------------------------
-  Creating function to Initiate Paypal Payment
-  -------------------------------*/
-  const {user} = useSelector((state) => state.auth)
+  /*------------------------------------------
+    Calculate Total Cart Amount
+  -------------------------------------------*/
+  const totalCartAmount = cartItems && cartItems.items && cartItems.items.length > 0
+      ? cartItems.items.reduce(
+          (total, allCartItem) =>
+            total +
+            (allCartItem?.salePrice > 0
+              ? allCartItem?.salePrice
+              : allCartItem?.price) *
+              allCartItem?.quantity,
+          0
+        )
+      : 0;
 
-  //Creating State to manage address while checking out
-  const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null)
-
-  //Creating State to check if payment start or failed
-  const [isPaymentStart, setIsPaymentStart] = useState(false)
-
-  //getting approval state from redux store
-  const {approvalURL} = useSelector((state)=> state.shopOrder)
-  
-
-  function handleInitiatePaypalPayment(){
-
-    //Checking if any of item is added to cart or not
-    if(cartItems.length === 0){
-      toast("Your cart is empty. Please add products!", {
-        style : {background : "#ff0000"}
-      })
-      return
+  /*------------------------------------------
+    Handle PayPal Payment
+  -------------------------------------------*/
+  function handleInitiatePaypalPayment() {
+    // Check Empty Cart
+    if (
+      !cartItems?.items ||
+      cartItems.items.length === 0
+    ) {
+      toast(
+        "Your cart is empty. Please add products!",
+        {
+          style: {
+            background: "#ff0000",
+            color: "white",
+          },
+        }
+      );
+      return;
     }
 
-    //Checking if user added address or not
-    if(currentSelectedAddress === null){
+    // Check Address Selected
+    if (currentSelectedAddress === null) {
       toast("Please select address!", {
-        style : {background : "#ff0000"}
-      })
-      return
+        style: {
+          background: "#ff0000",
+          color: "white",
+        },
+      });
+      return;
     }
 
+    const orderData = { userId: user?.id, cartId: cartItems?._id,
+      cartItems: cartItems.items.map(
+        (singleCartItem) => ({
+          productId:
+            singleCartItem?.productId,
 
-    const orderData = {
-                    userId : user?.id,
-                    cartId : cartItems?._id,
-                    cartItems : cartItems.items.map(singleCartItem => ({
-                      productId : singleCartItem?.productId,
-                      title : singleCartItem?.title,
-                      image : singleCartItem?.image,
-                      price : singleCartItem?.salePrice > 0 ? singleCartItem?.salePrice : singleCartItem.price,
-                      quantity : singleCartItem?.quantity
-                    })),
-                    addressInfo : {
-                              addressId: currentSelectedAddress?._id,
-                              address: currentSelectedAddress?.address,
-                              city: currentSelectedAddress?.city,
-                              pincode: currentSelectedAddress?.pincode,
-                              phone: currentSelectedAddress?.phone,
-                              notes: currentSelectedAddress?.notes,
-                    },
-                    orderStatus : "pending",
-                    paymentMethod : 'paypal',
-                    paymentStatus : 'pending',
-                    totalAmount : totalCartAmount,
-                    orderDate : new Date,
-                    orderUpdateDate : new Date,
-                    paymentId : '',
-                    payerId : '',
-    }
-    console.log(orderData);
-    
+          title: singleCartItem?.title,
 
-    /*----------------------------------
-    Dispatching all this order information to createNewOrder -- Asyncthunk
-    ------------------------------------*/
-    dispatch(createNewOrder(orderData)).then((data) => {
-      console.log(data);
+          image: singleCartItem?.image,
 
-      if(data?.payload?.success){
-        setIsPaymentStart(true)
-      }else{
-        setIsPaymentStart(false)
+          price:
+            singleCartItem?.salePrice > 0
+              ? singleCartItem?.salePrice
+              : singleCartItem.price,
+
+          quantity:
+            singleCartItem?.quantity,
+        })
+      ),
+
+      addressInfo: {
+        addressId:
+          currentSelectedAddress?._id,
+
+        address:
+          currentSelectedAddress?.address,
+
+        city:
+          currentSelectedAddress?.city,
+
+        pincode:
+          currentSelectedAddress?.pincode,
+
+        phone:
+          currentSelectedAddress?.phone,
+
+        notes:
+          currentSelectedAddress?.notes,
+      },
+
+      orderStatus: "pending",
+
+      paymentMethod: "paypal",
+
+      paymentStatus: "pending",
+
+      totalAmount: totalCartAmount,
+
+      orderDate: new Date(),
+
+      orderUpdateDate: new Date(),
+
+      paymentId: "",
+
+      payerId: "",
+    };
+
+    dispatch(createNewOrder(orderData)).then(
+      (data) => {
+        if (data?.payload?.success) {
+          setIsPaymentStart(true);
+        } else {
+          setIsPaymentStart(false);
+        }
       }
-    })
+    );
   }
 
-
-  /*---------------------------------
-  After successfully hitting the Chekcout with paypal -- We will goes to Paypal payment page
-  -----------------------------------*/
-  if(approvalURL){
-    window.location.href = approvalURL
+  /*------------------------------------------
+    Redirect To PayPal
+  -------------------------------------------*/
+  if (approvalURL) {
+    window.location.href = approvalURL;
   }
-
 
   return (
-    <div className="flex flex-col">
-      <div className="relative h-[450px] w-full overflow-hidden">
-        <img src={checkoutImg} alt="Checkout-Page" className="h-full w-full object-cover object-center"/>
+    <div className="flex flex-col overflow-x-hidden">
+      {/*------------------------------------------
+        Responsive Banner Image
+      -------------------------------------------*/}
+      <div className="relative w-full overflow-hidden h-[220px] sm:h-[300px] md:h-[400px] lg:h-[500px]">
+        <img
+          src={checkoutImg}
+          alt="Checkout-Page"
+          className="w-full h-full object-cover object-center"/>
+
+        {/* Optional Dark Overlay */}
+        <div className="absolute inset-0 bg-black/20"></div>
       </div>
 
-      {/* Getting User's Address */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5 p-5">
-        <Address selectedId={currentSelectedAddress} setCurrentSelectedAddress={setCurrentSelectedAddress}/>
-        <div className="flex flex-col gap-4">
-          {
-            cartItems && cartItems.items && cartItems.items.length > 0 ?
-            cartItems.items.map(item => <UserCartItemsLayout cartItem={item}/>) : null
-          }
-        <div className="space-y-4 p-5">
-          <div className="flex justify-between">
-            <span className="font-bold ">Total</span>
-            <span className="font-bold">${totalCartAmount}</span>
-          </div>
+      {/*------------------------------------------
+        Checkout Content
+      -------------------------------------------*/}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4 sm:p-5 md:p-8">
+        {/* Address Section */}
+        <div className="w-full">
+          <Address
+            selectedId={
+              currentSelectedAddress
+            }
+            setCurrentSelectedAddress={
+              setCurrentSelectedAddress
+            }
+          />
         </div>
-          <div className="mt-4 w-full">
-            {/* Whne we are saving any User's Data for first time it should be static */}
-            <Button onClick ={handleInitiatePaypalPayment} className='w-full'>
-              {
-                isPaymentStart ? 'Processing PayPal Payment' : 'Checkout with PayPal'
+
+        {/* Cart Items Section */}
+        <div className="flex flex-col gap-4 w-full">
+          {/* Cart Products */}
+          {cartItems &&
+          cartItems.items &&
+          cartItems.items.length > 0
+            ? cartItems.items.map((item) => (
+                <UserCartItemsLayout
+                  key={item.productId}
+                  cartItem={item}
+                />
+              ))
+            : null}
+
+          {/* Total */}
+          <div className="space-y-4 border rounded-lg p-4 sm:p-5 shadow-sm bg-white">
+            <div className="flex justify-between items-center">
+              <span className="font-bold text-base sm:text-lg">
+                Total
+              </span>
+
+              <span className="font-bold text-base sm:text-lg">
+                $
+                {totalCartAmount.toFixed(
+                  2
+                )}
+              </span>
+            </div>
+          </div>
+
+          {/* Checkout Button */}
+          <div className="w-full">
+            <Button
+              onClick={
+                handleInitiatePaypalPayment
               }
+              className="w-full h-11 sm:h-12 text-sm sm:text-base"
+            >
+              {isPaymentStart
+                ? "Processing PayPal Payment..."
+                : "Checkout with PayPal"}
             </Button>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default ShoppingCheckout;
