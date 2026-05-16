@@ -10,15 +10,15 @@ import pumaSlider from "../../assets/Puma_Slider.jpg";
 
 import { Button } from "@/components/ui/button";
 
-import { Airplay, BabyIcon, ChevronLeftIcon, ChevronRightIcon, Footprints, Heater, Images, Shirt, ShirtIcon, ShoppingBasket, Venus, WashingMachine, WatchIcon,} from "lucide-react";
+import { Airplay, BabyIcon, ChevronLeftIcon, ChevronRightIcon, Footprints, Heater, Images, Shirt, ShirtIcon, ShoppingBasket, Venus, WashingMachine, WatchIcon, } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useDispatch, useSelector } from "react-redux";
 
-import { fetchAllFilteredProducts, fetchProductDetails,} from "@/store/shop/product-slice";
+import { fetchAllFilteredProducts, fetchProductDetails, } from "@/store/shop/product-slice";
 import ShoppingProductTile from "@/components/shopping-view/product-tile";
 import { useNavigate } from "react-router-dom";
 
-import { addToCart, fetchCartItems,} from "@/store/shop/cart-slice";
+import { addToCart, fetchCartItems, } from "@/store/shop/cart-slice";
 import { toast } from "sonner";
 import ProductDetailsDialog from "@/components/shopping-view/product-details";
 import MiniFooter from "@/components/shopping-view/footer";
@@ -52,7 +52,7 @@ function ShoppingHome() {
   -------------------------------------------*/
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const slides = [ bannerOne, bannerTwo, bannerThree, pumaSlider,];
+  const slides = [bannerOne, bannerTwo, bannerThree, pumaSlider,];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -96,7 +96,7 @@ function ShoppingHome() {
   -------------------------------------------*/
   const navigate = useNavigate();
 
-  function handleCartItemToListing( getCurrentId, section) {
+  function handleCartItemToListing(getCurrentId, section) {
     sessionStorage.removeItem("filters");
 
     const currentFilter = {
@@ -114,7 +114,7 @@ function ShoppingHome() {
   /*------------------------------------------
     Product Details
   -------------------------------------------*/
-  function handleGetProductDetails( getCurrentProductID ) {
+  function handleGetProductDetails(getCurrentProductID) {
     dispatch(
       fetchProductDetails(getCurrentProductID)
     );
@@ -123,7 +123,7 @@ function ShoppingHome() {
   /*------------------------------------------
     Add To Cart
   -------------------------------------------*/
-  function handleAddToCart( getCurrentProductId, getTotalStock ) {
+  function handleAddToCart(getCurrentProductId, getTotalStock) {
     let getCartItems = cartItems.items || [];
 
     if (getCartItems.length) {
@@ -183,17 +183,16 @@ function ShoppingHome() {
       {/*------------------------------------------
         Hero Slider
       -------------------------------------------*/}
-      <div className="relative w-full h-[250px] sm:h-[400px] md:h-[550px] lg:h-[700px] overflow-hidden">
+      <div className="relative w-full h-[35vh] sm:h-[45vh] md:h-[60vh] lg:h-[75vh] overflow-hidden">
         {slides.map((slide, index) => (
           <img
             src={slide}
             key={index}
             alt={`slide-${index}`}
-            className={`${
-              index === currentSlide
+            className={`${index === currentSlide
                 ? "opacity-100"
                 : "opacity-0"
-            } absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000`}
+              } absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000`}
           />
         ))}
 
@@ -309,21 +308,21 @@ function ShoppingHome() {
 
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {productList &&
-            productList.length > 0
+              productList.length > 0
               ? productList
-                  .slice(0, 15)
-                  .map((productItem) => (
-                    <ShoppingProductTile
-                      key={productItem._id}
-                      product={productItem}
-                      handleGetProductDetails={
-                        handleGetProductDetails
-                      }
-                      handleAddToCart={
-                        handleAddToCart
-                      }
-                    />
-                  ))
+                .slice(0, 15)
+                .map((productItem) => (
+                  <ShoppingProductTile
+                    key={productItem._id}
+                    product={productItem}
+                    handleGetProductDetails={
+                      handleGetProductDetails
+                    }
+                    handleAddToCart={
+                      handleAddToCart
+                    }
+                  />
+                ))
               : null}
           </div>
         </div>
